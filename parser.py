@@ -134,19 +134,6 @@ def parseJson(json_file):
 
                         for val in users.values():
                             users_file.write(val)
-            
-		# "required": ["ItemID", "Name", "Category", "Currently", "First_Bid", "Number_of_Bids", "Bids", "Location", "Country", "Started", "Ends", "Seller", "Description"]
-		# 		"required": ["UserID", "Rating"]
-        #                 "required": ["Bidder", "Time", "Amount"]
-		# 					"required": ["UserID", "Rating"]
-
-
-            # Item: ItemID, Name, Category, Currently, Buy_Price, First_Bid, Number_of_Bids, Bids, Location, Country, Started, Ends, Seller (becomes SellerID), Description
-            # Bids: Bidder (is an ID in Users Table), Time, Amount
-            # Bidder: Location, Country, UserID, Rating
-            # Seller: UserID, Rating
-
-
 
 
 """

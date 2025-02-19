@@ -22,8 +22,8 @@ CREATE TABLE Items (
     FOREIGN KEY (SellerID) REFERENCES Users(UserID)
 );
 CREATE TABLE Categories (
-    ItemID TEXT,
-    Name TEXT,
+    ItemID TEXT NOT NULL,
+    Name TEXT NOT NULL,
     PRIMARY KEY (ItemID, Name),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
