@@ -114,15 +114,19 @@ def parseJson(json_file):
                             SellerRating = item["Seller"]["Rating"]
 
                             for category in Categories:
-                                categories_file.write(f"{category}")
+                                categories_file.write(f"{category}\n")
                             Description = "Null"
                             if item.get("Description"):
                                 Description = item.get("Description", "NULL").replace("|", " ") 
-                            for bid in Bids:
-                                bidder = bid["Bidder"]
-                                bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}")
-                                users_file.write(f"{bidder["UserID"]}|{bidder["Rating"]}|{bidder["Location"]}|{bidder["Country"]}")
-                            users_file.write(f"{SellerID}|{SellerRating}|{Location}|{Country}")
+                            if Bids:
+                                for bid in Bids:
+                                    bid = bid["Bid"]
+                                    bidder = bid["Bidder"]
+                                    country = bidder.get("Country", "NULL")
+                                    location = bidder.get("Location", "NULL")
+                                    bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}\n")
+                                    users_file.write(f"{bidder["UserID"]}|{bidder["Rating"]}|{location}|{country}\n")
+                            users_file.write(f"{SellerID}|{SellerRating}|{Location}|{Country}\n")
                             items_file.write(f"{ItemID}|{Name}|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|{Description}|{Ends}|{Started}|{SellerID}" + "\n")
             
 		# "required": ["ItemID", "Name", "Category", "Currently", "First_Bid", "Number_of_Bids", "Bids", "Location", "Country", "Started", "Ends", "Seller", "Description"]

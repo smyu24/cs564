@@ -19,7 +19,7 @@ CREATE TABLE Items (
     Ends REAL,
     Started REAL,
     SellerID TEXT,
-    FOREIGN KEY SellerID REFERENCES Users(UserID)
+    FOREIGN KEY (SellerID) REFERENCES Users(UserID)
 );
 CREATE TABLE Categories (
     ItemID TEXT,
