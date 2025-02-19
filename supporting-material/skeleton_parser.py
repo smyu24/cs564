@@ -131,17 +131,22 @@ def parseJson(json_file):
 
             # "Bids": [{"Bid": {"Bidder": {"UserID": "goldcoastvideo", "Rating": "2919", "Location": "Los Angeles,CA", "Country": "USA"}, "Time": "Dec-06-01 06:44:54", "Amount": "$4.00"}}]
             BidsTableInput = ""
+
             if Bids:
                 for bidder in Bids:
-                    Bidder = bidder["Bid"]
-                    Bidder_UserID = Bidder.get("UserID", "Null")
+                    BidData = bidder["Bid"]
+                    Bidder = BidData["Bidder"]
+
+                    Bidder_UserID = Bidder["UserID"]
                     Bidder_Rating = Bidder.get("Rating", "Null")
                     Bidder_Location = Bidder.get("Location", "Null").replace("|", " ")
                     Bidder_Country = Bidder.get("Country", "Null").replace("|", " ")
-                    Bidder_Time = transformDttm(Bidder.get("Time"), "Null")
-                    Bidder_Amount = transformDollar(Bidder.get("Amount"), "Null")
-                    BidsTableInput += f"{Bidder_UserID}|{Bidder_Rating}|{Bidder_Location}|{Bidder_Time}|{Bidder_Country}|{Bidder_Time}|{Bidder_Amount}" + "\n"  
-                with open("Users.dat", "a") as f:
+                    Bidder_Time = transformDttm(BidData.get("Time", "Null"))
+                    Bidder_Amount = transformDollar(BidData.get("Amount", "$0.00"))
+
+                    BidsTableInput += f"{Bidder_UserID}|{Bidder_Rating}|{Bidder_Location}|{Bidder_Country}|{Bidder_Time}|{Bidder_Amount}\n"
+
+                with open("Bids.dat", "a") as f:
                     f.write(BidsTableInput)
 
             
