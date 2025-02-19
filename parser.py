@@ -92,6 +92,7 @@ def parseJson(json_file):
                     with open('Bids.dat','a') as bids_file:
                         # creates a Python dictionary of Items for the supplied json file
                         items = loads(f.read())['Items']
+                        users = {}
                         for item in items:
                             """
                             TODO: traverse the items dictionary to extract information from the
@@ -99,14 +100,14 @@ def parseJson(json_file):
                             the SQL tables based on your relation design
                             """
                             ItemID = item["ItemID"]
-                            Name = item.get("Name", "NULL")
+                            Name = item.get("Name", "NULL").replace('"', '""')
                             Categories = item.get("Category", "NULL")
                             Curently = transformDollar(item.get("Currently", "NULL"))
                             Buy_Price = transformDollar(item.get("First_Bid", "NULL"))
                             First_Bid = transformDollar(item.get("First_Bid", "NULL"))
                             Number_of_Bids = item.get("Number_of_Bids", "0")
                             Bids = item.get("Bids", [])
-                            Location = item.get("Location", "NULL")
+                            Location = item.get("Location", "NULL").replace('"', '""')
                             Country = item.get("Country", "NULL")
                             Started = transformDttm(item.get("Started", "NULL"))
                             Ends = transformDttm(item.get("Ends", "NULL"))
@@ -114,20 +115,25 @@ def parseJson(json_file):
                             SellerRating = item["Seller"]["Rating"]
 
                             for category in Categories:
-                                categories_file.write(f"{category}\n")
+                                categories_file.write(f"{ItemID}|{category}\n")
                             Description = "Null"
                             if item.get("Description"):
                                 Description = item.get("Description", "NULL").replace("|", " ") 
+                                Description = Description.replace('"', '""')
                             if Bids:
                                 for bid in Bids:
                                     bid = bid["Bid"]
                                     bidder = bid["Bidder"]
                                     country = bidder.get("Country", "NULL")
-                                    location = bidder.get("Location", "NULL")
+                                    location = bidder.get("Location", "NULL").replace('"', '""')
                                     bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}\n")
-                                    users_file.write(f"{bidder["UserID"]}|{bidder["Rating"]}|{location}|{country}\n")
-                            users_file.write(f"{SellerID}|{SellerRating}|{Location}|{Country}\n")
-                            items_file.write(f"{ItemID}|{Name}|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|{Description}|{Ends}|{Started}|{SellerID}" + "\n")
+                                    bidderID = bidder["UserID"]
+                                    users[bidderID] = f'{bidderID}|{bidder["Rating"]}|"{location}"|{country}\n'
+                            users[SellerID] = f'{SellerID}|{SellerRating}|"{Location}"|{Country}\n'
+                            items_file.write(f'{ItemID}|"{Name}"|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|"{Description}"|{Ends}|{Started}|{SellerID}\n')
+
+                        for val in users.values():
+                            users_file.write(val)
             
 		# "required": ["ItemID", "Name", "Category", "Currently", "First_Bid", "Number_of_Bids", "Bids", "Location", "Country", "Started", "Ends", "Seller", "Description"]
 		# 		"required": ["UserID", "Rating"]
@@ -141,8 +147,6 @@ def parseJson(json_file):
             # Seller: UserID, Rating
 
 
-            # remove duplicate tuples
-            pass
 
 
 """

@@ -25,13 +25,14 @@ CREATE TABLE Categories (
     ItemID TEXT,
     Name TEXT,
     PRIMARY KEY (ItemID, Name),
-    FOREIGN KEY (ItemID) REFERENCES Items(ItemID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
 CREATE TABLE Bids (
-    BidderID TEXT PRIMARY KEY NOT NULL,
+    BidderID TEXT NOT NULL,
     ItemID TEXT NOT NULL,
     Time TEXT NOT NULL,
     Amount DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY BidderID REFERENCES Users(UserID),
-    FOREIGN KEY ItemID REFERENCES Items(ItemID)
+    PRIMARY KEY (BidderID, ItemID, Time),
+    FOREIGN KEY (BidderID) REFERENCES Users(UserID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
