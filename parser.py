@@ -85,44 +85,45 @@ item in the data set. Your job is to extend this functionality to create all
 of the necessary SQL tables for your database.
 """
 def parseJson(json_file):
-    with open('Items.dat','a') as items_file:
-        with open('Users.dat', 'a') as users_file:
-            with open('Categories.dat', 'a') as categories_file:
-                with open('Bids.dat','a') as bids_file:
-                    # creates a Python dictionary of Items for the supplied json file
-                    items = loads(json_file.read())['Items']
-                    for item in items:
-                        """
-                        TODO: traverse the items dictionary to extract information from the
-                        given `json_file' and generate the necessary .dat files to generate
-                        the SQL tables based on your relation design
-                        """
-                        ItemID = item["ItemID"]
-                        Name = item.get("Name", "NULL")
-                        Categories = item.get("Category", "NULL")
-                        Curently = transformDollar(item.get("Currently", "NULL"))
-                        Buy_Price = transformDollar(item.get("First_Bid", "NULL"))
-                        First_Bid = transformDollar(item.get("First_Bid", "NULL"))
-                        Number_of_Bids = item.get("Number_of_Bids", "0")
-                        Bids = item.get("Bids", [])
-                        Location = item.get("Location", "NULL")
-                        Country = item.get("Country", "NULL")
-                        Started = transformDttm(item.get("Started", "NULL"))
-                        Ends = transformDttm(item.get("Ends", "NULL"))
-                        SellerID = item["Seller"]["UserID"]
-                        SellerRating = item["Seller"]["Rating"]
+    with open(json_file, 'r') as f:
+        with open('Items.dat','a') as items_file:
+            with open('Users.dat', 'a') as users_file:
+                with open('Categories.dat', 'a') as categories_file:
+                    with open('Bids.dat','a') as bids_file:
+                        # creates a Python dictionary of Items for the supplied json file
+                        items = loads(f.read())['Items']
+                        for item in items:
+                            """
+                            TODO: traverse the items dictionary to extract information from the
+                            given `json_file' and generate the necessary .dat files to generate
+                            the SQL tables based on your relation design
+                            """
+                            ItemID = item["ItemID"]
+                            Name = item.get("Name", "NULL")
+                            Categories = item.get("Category", "NULL")
+                            Curently = transformDollar(item.get("Currently", "NULL"))
+                            Buy_Price = transformDollar(item.get("First_Bid", "NULL"))
+                            First_Bid = transformDollar(item.get("First_Bid", "NULL"))
+                            Number_of_Bids = item.get("Number_of_Bids", "0")
+                            Bids = item.get("Bids", [])
+                            Location = item.get("Location", "NULL")
+                            Country = item.get("Country", "NULL")
+                            Started = transformDttm(item.get("Started", "NULL"))
+                            Ends = transformDttm(item.get("Ends", "NULL"))
+                            SellerID = item["Seller"]["UserID"]
+                            SellerRating = item["Seller"]["Rating"]
 
-                        for category in Categories:
-                            categories_file.write(f"{category}")
-                        Description = "Null"
-                        if item.get("Description"):
-                            Description = item.get("Description", "NULL").replace("|", " ") 
-                        for bid in Bids:
-                            bidder = bid["Bidder"]
-                            bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}")
-                            users_file.write(f"{bidder["UserID"]}|{bidder["Rating"]}|{bidder["Location"]}|{bidder["Country"]}")
-                        users_file.write(f"{SellerID}|{SellerRating}|{Location}|{Country}")
-                        items_file.write(f"{ItemID}|{Name}|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|{Description}|{Ends}|{Started}|{SellerID}" + "\n")
+                            for category in Categories:
+                                categories_file.write(f"{category}")
+                            Description = "Null"
+                            if item.get("Description"):
+                                Description = item.get("Description", "NULL").replace("|", " ") 
+                            for bid in Bids:
+                                bidder = bid["Bidder"]
+                                bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}")
+                                users_file.write(f"{bidder["UserID"]}|{bidder["Rating"]}|{bidder["Location"]}|{bidder["Country"]}")
+                            users_file.write(f"{SellerID}|{SellerRating}|{Location}|{Country}")
+                            items_file.write(f"{ItemID}|{Name}|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|{Description}|{Ends}|{Started}|{SellerID}" + "\n")
             
 		# "required": ["ItemID", "Name", "Category", "Currently", "First_Bid", "Number_of_Bids", "Bids", "Location", "Country", "Started", "Ends", "Seller", "Description"]
 		# 		"required": ["UserID", "Rating"]
