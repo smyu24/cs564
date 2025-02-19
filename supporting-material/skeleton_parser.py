@@ -31,27 +31,35 @@ from re import sub
 columnSeparator = "|"
 
 # Dictionary of months used for date transformation
-MONTHS = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',\
-        'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
+MONTHS = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+          'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
 
 """
 Returns true if a file ends in .json
 """
+
+
 def isJson(f):
     return len(f) > 5 and f[-5:] == '.json'
+
 
 """
 Converts month to a number, e.g. 'Dec' to '12'
 """
+
+
 def transformMonth(mon):
     if mon in MONTHS:
         return MONTHS[mon]
     else:
         return mon
 
+
 """
 Transforms a timestamp from Mon-DD-YY HH:MM:SS to YYYY-MM-DD HH:MM:SS
 """
+
+
 def transformDttm(dttm):
     dttm = dttm.strip().split(' ')
     dt = dttm[0].split('-')
@@ -59,14 +67,17 @@ def transformDttm(dttm):
     date += transformMonth(dt[0]) + '-' + dt[1]
     return date + ' ' + dttm[1]
 
+
 """
 Transform a dollar value amount from a string like $3,453.23 to XXXXX.xx
 """
+
 
 def transformDollar(money):
     if money == None or len(money) == 0:
         return money
     return sub(r'[^\d.]', '', money)
+
 
 """
 Parses a single json file. Currently, there's a loop that iterates over each
@@ -75,28 +86,56 @@ of the necessary SQL tables for your database.
 """
 def parseJson(json_file):
     with open(json_file, 'r') as f:
-        items = loads(f.read())['Items'] # creates a Python dictionary of Items for the supplied json file
+        # creates a Python dictionary of Items for the supplied json file
+        items = loads(f.read())['Items']
         for item in items:
             """
             TODO: traverse the items dictionary to extract information from the
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-
-            x = item.items()
-
-            for i in x:
-                
-            transformDollar()
-            transformDttm()
+            ItemID = item["ItemID"]
+            Name = item.get("Name", "NULL")
+            Category = item.get("Category", "NULL")
+            Curently = transformDollar(item.get("Currently", "NULL"))
+            Buy_Price = transformDollar(item.get("First_Bid", "NULL"))
+            First_Bid = transformDollar(item.get("First_Bid", "NULL"))
+            Number_of_Bids = item.get("Number_of_Bids", "0")
+            Bids = item.get("Bids", "NULL")
+            Location = item.get("Location", "NULL")
+            Country = item.get("Country", "NULL")
+            Started = transformDttm(item.get("Started", "NULL"))
+            Ends = transformDttm(item.get("Ends", "NULL"))
+            Seller = item["Seller"]["UserID"]
+            Description = "Null"
+            if item.get("Description"):
+                Description = item.get("Description", "NULL").replace("|", " ") 
             
+		# "required": ["ItemID", "Name", "Category", "Currently", "First_Bid", "Number_of_Bids", "Bids", "Location", "Country", "Started", "Ends", "Seller", "Description"]
+		# 		"required": ["UserID", "Rating"]
+        #                 "required": ["Bidder", "Time", "Amount"]
+		# 					"required": ["UserID", "Rating"]
+
+
+            # Item: ItemID, Name, Category, Currently, Buy_Price, First_Bid, Number_of_Bids, Bids, Location, Country, Started, Ends, Seller (becomes SellerID), Description
+            # Bids: Bidder (is an ID in Users Table), Time, Amount
+            # Bidder: Location, Country, UserID, Rating
+            # Seller: UserID, Rating
+
+            with open("Items.dat", "a") as f:
+                f.write(f"{ItemID}|{Name}|{Category}|{Curently}|{Buy_Price}|{First_Bid}|{Number_of_Bids}|{Location}|{Country}|{Started}|{Ends}|{Seller}|{Description}" + "\n")
+
+
             # remove duplicate tuples
             pass
+
 
 """
 Loops through each json files provided on the command line and passes each file
 to the parser
 """
+
+
 def main(argv):
     if len(argv) < 2:
         print >> sys.stderr, 'Usage: python skeleton_json_parser.py <path to json files>'
@@ -105,7 +144,8 @@ def main(argv):
     for f in argv[1:]:
         if isJson(f):
             parseJson(f)
-            print ("Success parsing " + f)
+            print("Success parsing " + f)
+
 
 if __name__ == '__main__':
     main(sys.argv)
