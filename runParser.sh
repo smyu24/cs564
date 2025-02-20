@@ -1,10 +1,9 @@
 #! /usr/bin/env zsh
-# SBATCH --job-name=task2
-# SBATCH --output=task2_output_%j.txt
-# SBATCH --error=task2_error_%j.txt
-# SBATCH --time=00:15:00          
-# SBATCH --ntasks=1               
-# SBATCH --gpus-per-task=1
-# SBATCH --partition=instruction
-
-python my_parser.py ebay_data/items-*.json
+rm *.dat
+python parser.py ebay_data/items-*.json
+sort -u Items.dat -o Items.dat
+sort -u Users.dat -o Users.dat
+sort -u Categories.dat -o Categories.dat
+sort -u Bids.dat -o Bids.dat
+ 
+ 

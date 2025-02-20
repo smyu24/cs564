@@ -19,19 +19,20 @@ CREATE TABLE Items (
     Ends REAL,
     Started REAL,
     SellerID TEXT,
-    FOREIGN KEY SellerID REFERENCES Users(UserID)
+    FOREIGN KEY (SellerID) REFERENCES Users(UserID)
 );
 CREATE TABLE Categories (
-    ItemID TEXT,
-    Name TEXT,
+    ItemID TEXT NOT NULL,
+    Name TEXT NOT NULL,
     PRIMARY KEY (ItemID, Name),
-    FOREIGN KEY (ItemID) REFERENCES Items(ItemID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
 CREATE TABLE Bids (
-    BidderID TEXT PRIMARY KEY NOT NULL,
+    BidderID TEXT NOT NULL,
     ItemID TEXT NOT NULL,
     Time TEXT NOT NULL,
     Amount DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY BidderID REFERENCES Users(UserID),
-    FOREIGN KEY ItemID REFERENCES Items(ItemID)
+    PRIMARY KEY (BidderID, ItemID, Time),
+    FOREIGN KEY (BidderID) REFERENCES Users(UserID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
