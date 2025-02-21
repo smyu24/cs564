@@ -126,7 +126,8 @@ def parseJson(json_file):
                                     bidder = bid["Bidder"]
                                     country = bidder.get("Country", "NULL")
                                     location = bidder.get("Location", "NULL").replace('"', '""')
-                                    bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{bid["Amount"]}\n")
+                                    amount = transformDollar(bid["Amount"])
+                                    bids_file.write(f"{bidder["UserID"]}|{ItemID}|{bid["Time"]}|{amount}\n")
                                     bidderID = bidder["UserID"]
                                     users[bidderID] = f'{bidderID}|{bidder["Rating"]}|"{location}"|{country}\n'
                             users[SellerID] = f'{SellerID}|{SellerRating}|"{Location}"|{Country}\n'
