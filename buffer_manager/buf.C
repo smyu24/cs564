@@ -1,7 +1,9 @@
 #include "buf.h"
+#include "error.h"
 #include "page.h"
 #include <errno.h>
 #include <fcntl.h>
+#include <functional>
 #include <iostream>
 #include <memory.h>
 #include <stdio.h>
@@ -59,15 +61,94 @@ BufMgr::~BufMgr() {
   delete[] bufPool;
 }
 
-const Status BufMgr::allocBuf(int &frame) {}
+const Status BufMgr::allocBuf(int &frame) {
+  // clock algorithm
+  int selectedFrameIdx = -1;
+  while (selectedFrameIdx == -1) {
+    clockHand = (clockHand + 1) % numBufs;
+    BufDesc &curr = bufTable[clockHand];
 
-const Status BufMgr::readPage(File *file, const int PageNo, Page *&page) {}
+    // if valid must check, otherwise use right away
+    if (curr.valid) {
+      // if ref bit: set 0 and continue;
+      if (curr.refbit) {
+        curr.refbit = false;
+        // if not pinned: use, else continue
+      } else if (curr.pinCnt == 0) {
+        selectedFrameIdx = clockHand;
+        break;
+      }
+    } else {
+      // invalid so use it
+      selectedFrameIdx = clockHand;
+      break;
+    }
+  }
+  // buffer pool full
+  if (selectedFrameIdx == -1) {
+    return Status::BUFFEREXCEEDED;
+  }
 
-const Status BufMgr::unPinPage(File *file, const int PageNo, const bool dirty) {
-
+  BufDesc &selected = bufTable[selectedFrameIdx];
+  if (selected.valid) {
+    // free from hash table
+    auto res = hashTable->remove(selected.file, selected.pageNo);
+    if (res) {
+      Error().print(res);
+      return res;
+    }
+  }
+  // flush to disk if dirty
+  if (selected.dirty) {
+    selected.file->writePage(selected.pageNo, &bufPool[selectedFrameIdx]);
+    // TODO: don't actually need to set?
+    selected.dirty = false;
+  }
+  return OK;
 }
 
-const Status BufMgr::allocPage(File *file, int &pageNo, Page *&page) {}
+const Status BufMgr::readPage(File *file, const int PageNo, Page *&page) {
+  // get page, if not page error
+
+  // set ref bit to true
+
+  // set page argument
+}
+
+const Status BufMgr::unPinPage(File *file, const int PageNo, const bool dirty) {
+}
+
+const Status BufMgr::allocPage(File *file, int &pageNo, Page *&page) {
+  // allocate empty page
+  Status err = file->allocatePage(pageNo);
+  if (err) {
+    Error().print(err);
+    return Status::UNIXERR;
+  }
+  // get a buffer pool frame
+  int frameNo;
+  err = allocBuf(frameNo);
+  if (err) {
+    Error().print(err);
+    if (err == BUFFEREXCEEDED) {
+      return err;
+    }
+    // TODO: what is return here (does allocBuf ever return anything else?)
+    return Status::BUFFEREXCEEDED;
+  }
+
+  // add frame to hash table
+  err = hashTable->insert(file, pageNo, frameNo);
+  if (err) {
+    return err;
+  }
+  // set up the frame
+  bufTable[frameNo].Set(file, pageNo);
+
+  // set the page
+  page = &bufPool[pageNo];
+  return OK;
+}
 
 const Status BufMgr::disposePage(File *file, const int pageNo) {
   // see if it is in the buffer pool
