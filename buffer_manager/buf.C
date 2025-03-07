@@ -1,6 +1,7 @@
 #include "buf.h"
 #include "error.h"
 #include "page.h"
+#include <cassert>
 #include <errno.h>
 #include <fcntl.h>
 #include <functional>
@@ -61,10 +62,14 @@ BufMgr::~BufMgr() {
   delete[] bufPool;
 }
 
+// allocates a free frame
+// return BUFFEREXCEEDED if no space, UNIXERR if unix error, else OK
 const Status BufMgr::allocBuf(int &frame) {
-  // clock algorithm
   int selectedFrameIdx = -1;
-  while (selectedFrameIdx == -1) {
+  int i = 0;
+  // at most, iterate over the pool twice, since one buffer can be marked 0 ref
+  // bit and need to come back to it
+  while (i < this->numBufs * 2) {
     clockHand = (clockHand + 1) % numBufs;
     BufDesc &curr = bufTable[clockHand];
 
@@ -83,39 +88,99 @@ const Status BufMgr::allocBuf(int &frame) {
       selectedFrameIdx = clockHand;
       break;
     }
+    i++;
   }
   // buffer pool full
   if (selectedFrameIdx == -1) {
     return Status::BUFFEREXCEEDED;
   }
+  frame = selectedFrameIdx;
 
   BufDesc &selected = bufTable[selectedFrameIdx];
   if (selected.valid) {
     // free from hash table
     auto res = hashTable->remove(selected.file, selected.pageNo);
+    assert(res == OK && "failed to remove from hashtable");
+    // shouldn't return this since hashtable remove shouldn't fail
     if (res) {
       Error().print(res);
       return res;
     }
-  }
-  // flush to disk if dirty
-  if (selected.dirty) {
-    selected.file->writePage(selected.pageNo, &bufPool[selectedFrameIdx]);
-    // TODO: don't actually need to set?
-    selected.dirty = false;
+    // flush to disk if dirty
+    if (selected.dirty) {
+      Status res =
+          selected.file->writePage(selected.pageNo, &bufPool[selectedFrameIdx]);
+      if (res) {
+        return UNIXERR;
+      }
+    }
+    bufTable[selectedFrameIdx].Clear();
   }
   return OK;
 }
 
+// returns UNIXERR if unix error, BUFFEREXCEEDED if all buffer frames pinned,
+// HASHTBLERROR if hash table error
 const Status BufMgr::readPage(File *file, const int PageNo, Page *&page) {
   // get page, if not page error
+  int frameNo;
+  Status err = hashTable->lookup(file, PageNo, frameNo);
+  // page not found: make a buf, read the page into the frame, add it into the
+  // hash table set() on frame to set it up
+  if (err == HASHNOTFOUND) {
+    // alloc buf to read in the page
+    err = allocBuf(frameNo);
+    if (err) {
+      Error().print(err);
+      return err;
+    }
+    // read page from disk
+    err = file->readPage(PageNo, &bufPool[frameNo]);
+    if (err) {
+      Error().print(err);
+      return err;
+    }
 
-  // set ref bit to true
-
-  // set page argument
+    // add page to table
+    err = hashTable->insert(file, PageNo, frameNo);
+    if (err) {
+      return err;
+    }
+    // set up the frame
+    bufTable[frameNo].Set(file, PageNo);
+  } else {
+    // page is in the pool, set the refBit, inc pinCnt and return it
+    BufDesc &desc = bufTable[frameNo];
+    desc.refbit = true;
+    desc.pinCnt++;
+  }
+  // return the page
+  page = &bufPool[frameNo];
+  return OK;
 }
 
 const Status BufMgr::unPinPage(File *file, const int PageNo, const bool dirty) {
+  // get the frame
+  int frameNo;
+  Status err = hashTable->lookup(file, PageNo, frameNo);
+  if (err == HASHNOTFOUND) {
+    Error().print(err);
+    return err;
+  }
+  assert(!err);
+
+  // if already 0 return PAGENOTPINNED, else dec
+  BufDesc &buf = bufTable[frameNo];
+  if (buf.pinCnt == 0) {
+    return PAGENOTPINNED;
+  }
+  if (dirty) {
+    buf.dirty = true;
+  }
+  buf.refbit = true;
+  buf.pinCnt--;
+
+  return OK;
 }
 
 const Status BufMgr::allocPage(File *file, int &pageNo, Page *&page) {
@@ -123,18 +188,14 @@ const Status BufMgr::allocPage(File *file, int &pageNo, Page *&page) {
   Status err = file->allocatePage(pageNo);
   if (err) {
     Error().print(err);
-    return Status::UNIXERR;
+    return UNIXERR;
   }
   // get a buffer pool frame
   int frameNo;
   err = allocBuf(frameNo);
   if (err) {
     Error().print(err);
-    if (err == BUFFEREXCEEDED) {
-      return err;
-    }
-    // TODO: what is return here (does allocBuf ever return anything else?)
-    return Status::BUFFEREXCEEDED;
+    return err;
   }
 
   // add frame to hash table
@@ -146,7 +207,7 @@ const Status BufMgr::allocPage(File *file, int &pageNo, Page *&page) {
   bufTable[frameNo].Set(file, pageNo);
 
   // set the page
-  page = &bufPool[pageNo];
+  page = &bufPool[frameNo];
   return OK;
 }
 
