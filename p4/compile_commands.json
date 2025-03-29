@@ -1,0 +1,79 @@
+[
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "db.C"
+  ],
+  "file": "db.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "buf.C"
+  ],
+  "file": "buf.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "bufHash.C"
+  ],
+  "file": "bufHash.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "error.C"
+  ],
+  "file": "error.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "page.C"
+  ],
+  "file": "page.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "heapfile.C"
+  ],
+  "file": "heapfile.C"
+ },
+ {
+  "directory": "/Users/tony/class/cs564_group/p4",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-c",
+   "testfile.C"
+  ],
+  "file": "testfile.C"
+ }
+]
