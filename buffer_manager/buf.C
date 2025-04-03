@@ -1,15 +1,15 @@
-#include "buf.h"
-#include "error.h"
-#include "page.h"
-#include <cassert>
-#include <errno.h>
-#include <fcntl.h>
-#include <functional>
-#include <iostream>
+// clang-format off
 #include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <iostream>
+#include <stdio.h>
+#include <cassert>
+#include "page.h"
+#include "buf.h"
+// clang-format on
 
 #define ASSERT(c)                                                              \
   {                                                                            \

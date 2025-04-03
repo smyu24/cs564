@@ -1,12 +1,14 @@
-#include "buf.h"
-#include "page.h"
+// clang-format off
+#include <memory.h>
+#include <unistd.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <iostream>
-#include <memory.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "page.h"
+#include "buf.h"
+// clang-format on
 
 // buffer pool hash table implementation
 

@@ -1,10 +1,13 @@
-#include "buf.h"
+// clang-format off
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <errno.h>
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <iostream>
+#include "page.h"
+#include "buf.h"
+// clang-format on
 
 #define CALL(c)                                                                \
   {                                                                            \

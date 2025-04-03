@@ -1,14 +1,14 @@
-#include "buf.h"
-#include "db.h"
-#include "page.h"
+#include <memory.h>
+#include <unistd.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <iostream>
 #include <math.h>
-#include <memory.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "page.h"
+#include "db.h"
+#include "buf.h"
 
 #define DBP(p) (*(DBPage *)&p)
 

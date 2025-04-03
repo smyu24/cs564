@@ -1,12 +1,10 @@
 #ifndef DB_H
 #define DB_H
 
-#include "error.h"
-#include "page.h"
-#include <functional>
-#include <string.h>
-#include <string>
 #include <sys/types.h>
+#include <functional>
+#include "error.h"
+#include <string.h>
 using namespace std;
 
 // define if debug output wanted
