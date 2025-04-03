@@ -1,3 +1,4 @@
+
 #ifndef ERROR_H
 #define ERROR_H
 
@@ -9,102 +10,68 @@
 
 enum Status {
 
-  // no error
+// no error
 
-  OK = 0,
-  NOTUSED1 = -999,
+       OK = 0, NOTUSED1 = -999,
 
-  // File and DB errors
+// File and DB errors
 
-  BADFILEPTR,
-  BADFILE,
-  FILETABFULL,
-  FILEOPEN,
-  FILENOTOPEN,
-  UNIXERR,
-  BADPAGEPTR,
-  BADPAGENO,
-  FILEEXISTS,
+       BADFILEPTR, BADFILE, FILETABFULL, FILEOPEN, FILENOTOPEN,
+       UNIXERR, BADPAGEPTR, BADPAGENO, FILEEXISTS,
 
-  // BufMgr and HashTable errors
+// BufMgr and HashTable errors
 
-  HASHTBLERROR,
-  HASHNOTFOUND,
-  BUFFEREXCEEDED,
-  PAGENOTPINNED,
-  BADBUFFER,
-  PAGEPINNED,
+       HASHTBLERROR, HASHNOTFOUND, BUFFEREXCEEDED, PAGENOTPINNED,
+       BADBUFFER, PAGEPINNED,
 
-  // Page errors
+// Page errors
+	
+       NOSPACE,  NORECORDS,  ENDOFPAGE, INVALIDSLOTNO, INVALIDRECLEN,
 
-  NOSPACE,
-  NORECORDS,
-  ENDOFPAGE,
-  INVALIDSLOTNO,
-  INVALIDRECLEN,
+// HeapFile errors
 
-  // HeapFile errors
+       BADRID, BADRECPTR, BADSCANPARM, BADSCANID, SCANTABFULL, FILEEOF, FILEHDRFULL,
 
-  BADRID,
-  BADRECPTR,
-  BADSCANPARM,
-  BADSCANID,
-  SCANTABFULL,
-  FILEEOF,
-  FILEHDRFULL,
+// Index errors
+ 
+       BADINDEXPARM, RECNOTFOUND, BUCKETFULL, DIROVERFLOW, 
+       NONUNIQUEENTRY, NOMORERECS,
 
-  // Index errors
+// SortedFile errors
+ 
+       BADSORTPARM, INSUFMEM, 
+	
+// Catalog errors
 
-  BADINDEXPARM,
-  RECNOTFOUND,
-  BUCKETFULL,
-  DIROVERFLOW,
-  NONUNIQUEENTRY,
-  NOMORERECS,
+       BADCATPARM, RELNOTFOUND, ATTRNOTFOUND,
+       NAMETOOLONG, DUPLATTR, RELEXISTS, NOINDEX,
+       INDEXEXISTS, ATTRTOOLONG,
 
-  // SortedFile errors
+// Utility errors
 
-  BADSORTPARM,
-  INSUFMEM,
+// Query errors
 
-  // Catalog errors
+       ATTRTYPEMISMATCH, TMP_RES_EXISTS,
 
-  BADCATPARM,
-  RELNOTFOUND,
-  ATTRNOTFOUND,
-  NAMETOOLONG,
-  DUPLATTR,
-  RELEXISTS,
-  NOINDEX,
-  INDEXEXISTS,
-  ATTRTOOLONG,
+// do not touch filler -- add codes before it
 
-  // Utility errors
-
-  // Query errors
-
-  ATTRTYPEMISMATCH,
-  TMP_RES_EXISTS,
-
-  // do not touch filler -- add codes before it
-
-  NOTUSED2
+       NOTUSED2
 };
+
 
 // definition of Error class
 
 class Error {
-public:
+ public:
   void print(Status status);
 };
 
-#define ASSERT(c)                                                              \
-  {                                                                            \
-    if (!(c)) {                                                                \
-      cerr << "At line " << __LINE__ << ":" << endl << "  ";                   \
-      cerr << "This condition should hold: " #c << endl;                       \
-      exit(1);                                                                 \
-    }                                                                          \
-  }
+
+#define ASSERT(c)  { if (!(c)) { \
+		       cerr << "At line " << __LINE__ << ":" << endl << "  "; \
+                       cerr << "This condition should hold: " #c << endl; \
+                       exit(1); \
+		     } \
+                   }
 
 #endif

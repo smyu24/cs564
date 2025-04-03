@@ -1,4 +1,3 @@
-// clang-format off
 #include <memory.h>
 #include <unistd.h>
 #include <errno.h>
@@ -8,48 +7,52 @@
 #include <stdio.h>
 #include "page.h"
 #include "buf.h"
-// clang-format on
 
 // buffer pool hash table implementation
 
-int BufHashTbl::hash(const File *file, const int pageNo) {
+int BufHashTbl::hash(const File* file, const int pageNo)
+{
   int tmp, value;
-  tmp = (long)file; // cast of pointer to the file object to an integer
+  tmp = (long)file;  // cast of pointer to the file object to an integer
   value = (tmp + pageNo) % HTSIZE;
   return value;
 }
 
-BufHashTbl::BufHashTbl(int htSize) {
+
+BufHashTbl::BufHashTbl(int htSize)
+{
   HTSIZE = htSize;
   // allocate an array of pointers to hashBuckets
-  ht = new hashBucket *[htSize];
-  for (int i = 0; i < HTSIZE; i++)
+  ht = new hashBucket* [htSize];
+  for(int i=0; i < HTSIZE; i++)
     ht[i] = NULL;
 }
 
-BufHashTbl::~BufHashTbl() {
-  for (int i = 0; i < HTSIZE; i++) {
-    hashBucket *tmpBuf = ht[i];
+
+BufHashTbl::~BufHashTbl()
+{
+  for(int i = 0; i < HTSIZE; i++) {
+    hashBucket* tmpBuf = ht[i];
     while (ht[i]) {
       tmpBuf = ht[i];
       ht[i] = ht[i]->next;
       delete tmpBuf;
     }
   }
-  delete[] ht;
+  delete [] ht;
 }
+
 
 //---------------------------------------------------------------
 // insert entry into hash table mapping (file,pageNo) to frameNo;
 // returns OK if OK, HASHTBLERROR if an error occurred
 //---------------------------------------------------------------
 
-Status BufHashTbl::insert(const File *file, const int pageNo,
-                          const int frameNo) {
+Status BufHashTbl::insert(const File* file, const int pageNo, const int frameNo) {
 
   int index = hash(file, pageNo);
 
-  hashBucket *tmpBuc = ht[index];
+  hashBucket* tmpBuc = ht[index];
   while (tmpBuc) {
     if (tmpBuc->file == file && tmpBuc->pageNo == pageNo)
       return HASHTBLERROR;
@@ -59,7 +62,7 @@ Status BufHashTbl::insert(const File *file, const int pageNo,
   tmpBuc = new hashBucket;
   if (!tmpBuc)
     return HASHTBLERROR;
-  tmpBuc->file = (File *)file;
+  tmpBuc->file = (File*) file;
   tmpBuc->pageNo = pageNo;
   tmpBuc->frameNo = frameNo;
   tmpBuc->next = ht[index];
@@ -68,17 +71,20 @@ Status BufHashTbl::insert(const File *file, const int pageNo,
   return OK;
 }
 
-//-------------------------------------------------------------------
+
+//-------------------------------------------------------------------	     
 // Check if (file,pageNo) is currently in the buffer pool (ie. in
-// the hash table).  If so, return corresponding frameNo. else return
+// the hash table).  If so, return corresponding frameNo. else return 
 // HASHNOTFOUND
 //-------------------------------------------------------------------
 
-Status BufHashTbl::lookup(const File *file, const int pageNo, int &frameNo) {
+Status BufHashTbl::lookup(const File* file, const int pageNo, int& frameNo) 
+  {
   int index = hash(file, pageNo);
-  hashBucket *tmpBuc = ht[index];
+  hashBucket* tmpBuc = ht[index];
   while (tmpBuc) {
-    if (tmpBuc->file == file && tmpBuc->pageNo == pageNo) {
+    if (tmpBuc->file == file && tmpBuc->pageNo == pageNo)
+    {
       frameNo = tmpBuc->frameNo; // return frameNo by reference
       return OK;
     }
@@ -87,23 +93,24 @@ Status BufHashTbl::lookup(const File *file, const int pageNo, int &frameNo) {
   return HASHNOTFOUND;
 }
 
+
 //-------------------------------------------------------------------
 // delete entry (file,pageNo) from hash table. REturn OK if page was
 // found.  Else return HASHTBLERROR
 //-------------------------------------------------------------------
 
-Status BufHashTbl::remove(const File *file, const int pageNo) {
+Status BufHashTbl::remove(const File* file, const int pageNo) {
 
   int index = hash(file, pageNo);
-  hashBucket *tmpBuc = ht[index];
-  hashBucket *prevBuc = ht[index];
+  hashBucket* tmpBuc = ht[index];
+  hashBucket* prevBuc = ht[index];
 
   while (tmpBuc) {
     if (tmpBuc->file == file && tmpBuc->pageNo == pageNo) {
-      if (tmpBuc == ht[index])
-        ht[index] = tmpBuc->next;
+      if (tmpBuc == ht[index]) 
+	ht[index] = tmpBuc->next;
       else
-        prevBuc->next = tmpBuc->next;
+	prevBuc->next = tmpBuc->next;
       delete tmpBuc;
       return OK;
     } else {
