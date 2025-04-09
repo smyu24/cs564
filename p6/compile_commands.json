@@ -1,0 +1,278 @@
+[
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "minirel.C"
+  ],
+  "file": "minirel.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "buf.C"
+  ],
+  "file": "buf.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "bufHash.C"
+  ],
+  "file": "bufHash.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "db.C"
+  ],
+  "file": "db.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "heapfile.C"
+  ],
+  "file": "heapfile.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "error.C"
+  ],
+  "file": "error.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "page.C"
+  ],
+  "file": "page.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "catalog.C"
+  ],
+  "file": "catalog.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "create.C"
+  ],
+  "file": "create.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "destroy.C"
+  ],
+  "file": "destroy.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "help.C"
+  ],
+  "file": "help.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "load.C"
+  ],
+  "file": "load.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "print.C"
+  ],
+  "file": "print.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "quit.C"
+  ],
+  "file": "quit.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "insert.C"
+  ],
+  "file": "insert.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "delete.C"
+  ],
+  "file": "delete.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "select.C"
+  ],
+  "file": "select.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "join.C"
+  ],
+  "file": "join.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "sort.C"
+  ],
+  "file": "sort.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "partition.C"
+  ],
+  "file": "partition.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "joinHT.C"
+  ],
+  "file": "joinHT.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "dbcreate.C"
+  ],
+  "file": "dbcreate.C"
+ },
+ {
+  "directory": "/home/tony/class/cs564_group/p6",
+  "arguments": [
+   "g++",
+   "-g",
+   "-Wall",
+   "-DDEBUG",
+   "-c",
+   "dbdestroy.C"
+  ],
+  "file": "dbdestroy.C"
+ }
+]
