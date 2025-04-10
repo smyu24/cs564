@@ -115,7 +115,7 @@ const Status ScanSelect(const string &result, const int projCnt,
       goto end;
     }
   }
-  scan.endScan();
+  status = scan.endScan();
 
 end:
   if (outputRec.data)
