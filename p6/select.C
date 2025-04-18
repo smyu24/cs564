@@ -67,30 +67,31 @@ const Status ScanSelect(const string &result, const int projCnt,
   }
 
   Record outputRec;
-  outputRec.data = malloc(reclen);
-  if (!outputRec.data) {
-    return UNIXERR;
-  }
+  char outputData[reclen];
+  outputRec.data = (void *)outputData;
   outputRec.length = reclen;
 
   HeapFileScan scan(projNames[0].relName, status);
   if (status != OK) {
-    goto end;
+    return status;
   }
 
   if (attrDesc == nullptr) {
-    scan.startScan(0, 0, STRING, nullptr, EQ);
+    status = scan.startScan(0, 0, STRING, nullptr, EQ);
   } else if (attrDesc->attrType == STRING) {
-    scan.startScan(0, attrDesc->attrLen, STRING, filter, op);
+    status = scan.startScan(attrDesc->attrOffset, attrDesc->attrLen, STRING,
+                            filter, op);
   } else if (attrDesc->attrType == FLOAT) {
     float f = atof(filter);
-    scan.startScan(0, attrDesc->attrLen, FLOAT, (char *)&f, op);
+    status = scan.startScan(attrDesc->attrOffset, attrDesc->attrLen, FLOAT,
+                            (char *)&f, op);
   } else if (attrDesc->attrType == INTEGER) {
     int i = atoi(filter);
-    scan.startScan(0, attrDesc->attrLen, INTEGER, (char *)&i, op);
+    status = scan.startScan(attrDesc->attrOffset, attrDesc->attrLen, INTEGER,
+                            (char *)&i, op);
   }
   if (status != OK) {
-    goto end;
+    return status;
   }
 
   RID rid;
@@ -98,7 +99,7 @@ const Status ScanSelect(const string &result, const int projCnt,
     Record scanRec;
     status = scan.getRecord(scanRec);
     if (status != OK) {
-      goto end;
+      return status;
     }
     int outputOffset = 0;
     for (int i = 0; i < projCnt; i++) {
@@ -112,13 +113,8 @@ const Status ScanSelect(const string &result, const int projCnt,
     RID outRID;
     status = resultRel.insertRecord(outputRec, outRID);
     if (status != OK) {
-      goto end;
+      return status;
     }
   }
-  status = scan.endScan();
-
-end:
-  if (outputRec.data)
-    free(outputRec.data);
-  return status;
+  return scan.endScan();
 }
